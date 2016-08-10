@@ -147,7 +147,7 @@ class MJPEGClient(Thread):
 
         while not self.stop:
             try:
-                with urllib.request.urlopen(url) as s:
+                with urllib.request.urlopen(self.url) as s:
                     self.process_stream(s)
             except EOFError:
                 pass

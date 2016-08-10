@@ -1,5 +1,5 @@
 /dist
 /py_mjpeg.egg-info
 *.pyc
-
+__pycache__
 
