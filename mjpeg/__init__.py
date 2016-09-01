@@ -161,7 +161,7 @@ def read_mjpeg_frame(stream, boundary, buf, length, skip_big=True):
     check_content_type(hdr, 'image/jpeg')
 
     timestamp = time()
-    if length:
+    if length >= clen:
         read_data(buf, stream, clen)
     else:
         skip_data(stream, clen)

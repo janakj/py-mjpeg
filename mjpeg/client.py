@@ -121,7 +121,7 @@ class MJPEGClient(Thread):
             self._update_fps()
             self.frames += 1
 
-            if buf is not None:
+            if buf is not None and length >= clen:
                 buf.timestamp = timestamp
                 buf.used = clen
                 buf.seq = seq
