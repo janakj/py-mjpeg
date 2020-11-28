@@ -7,6 +7,11 @@ The library provides a threaded client and a streaming generator for Flask based
 The library is only compatible with Python 3.x (tested on Python 3.4 and 3.5).
 It was tested with [mjpg_streamer](https://github.com/jacksonliam/mjpg-streamer).
 
+## Installation
+```sh
+pip3 install py-mjpeg
+```
+
 ## Client API
 
 The library provides a simple threaded streaming client in the file `mjpeg/client.py`.
