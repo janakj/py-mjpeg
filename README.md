@@ -9,7 +9,7 @@ It was tested with [mjpg_streamer](https://github.com/jacksonliam/mjpg-streamer)
 
 ## Client API
 
-The library provides a simple threaded streaming client in file `mjpeg/client.py`.
+The library provides a simple threaded streaming client in the file `mjpeg/client.py`.
 The client is designed to run in a separate background thread to ensure that it can continue reading from the stream
 while the main thread is blocked.
 The client automatically reconnects to the server if it gets disconnected.
@@ -31,9 +31,9 @@ for b in bufs:
 # Start the client in a background thread
 client.start()
 ```
-To obtain frame data, the higher layer application creates a list of memory buffers via `client.request_buffers`.
+To obtain frame data, the application creates a list of memory buffers via `client.request_buffers`.
 Each buffer holds exactly one JPEG frame.
-The application the requests the buffers to be filled by calling `client.enqueue_buffer`.
+The application then requests the buffers to be filled by calling `client.enqueue_buffer`.
 Once a buffer is enqueued, the application must no longer touch it.
 
 To received finished frames, the application calls `client.dequeue_buffer()` repeatedly:
@@ -76,9 +76,9 @@ MJPEGClient:
 ```
 
 ## Server API
-File `mjpeg/server.py` provides a generator for Flask that can be used to generate a MJPEG stream from iterator data.
+The file `mjpeg/server.py` provides a generator for Flask that can be used to generate a MJPEG stream from iterator data.
 
-Here is a simple example which relays MJPEG streams obtained from the client:
+Here is a simple "echo" example which just sends any frames received from a client back to the client:
 ```python
 from Flask import Flask, Response
 from mjpeg.server import MJPEGResponse
