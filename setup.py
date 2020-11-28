@@ -2,11 +2,24 @@
 
 import setuptools
 
+with open('README.md', 'r') as fh:
+    long_description = fh.read()
+
 setuptools.setup(
-    name         = 'py-mjpeg',
-    version      = '1.0.0',
-    description  = 'MJPEG Streaming Tools',
-    author       = 'Jan Janak',
+    name = 'py-mjpeg',
+    version = '1.0.0',
+    author = 'Jan Janak',
     author_email = 'jan@janakj.org',
-    packages     = setuptools.find_packages()
+    description = 'MJPEG Streaming Tools',
+    long_description = long_description,
+    long_description_content_type = 'text/markdown',
+    url = 'https://github.com/janakj/py-mjpeg',
+    packages = setuptools.find_packages(),
+    classifiers = [
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Development Status :: 5 - Production/Stable'
+    ],
+    python_requires='>=3'
 )
