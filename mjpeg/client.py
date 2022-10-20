@@ -54,6 +54,9 @@ class MJPEGClient(Thread):
         self.daemon = True
         self._incoming = deque()
         self._outgoing = Queue()
+        
+        # Internal variable used to control internal processing loops
+        self._stop_loops = False
 
         # Keep track of the total number of overruns in this attribute
         self.overruns = 0
@@ -69,7 +72,7 @@ class MJPEGClient(Thread):
         self.discarded_frames = 0
 
     def stop(self):
-        self.stop = True
+        self._stop_loops = True
 
     def request_buffers(self, length, count):
         rv = []
@@ -142,10 +145,10 @@ class MJPEGClient(Thread):
         print('  Buffer queue    : %d' % len(self._incoming))
 
     def run(self):
-        self.stop = False
+        self._stop_loops = False
         self._init_fps()
 
-        while not self.stop:
+        while not self._stop_loops:
             try:
                 with urllib.request.urlopen(self.url) as s:
                     self.process_stream(s)
