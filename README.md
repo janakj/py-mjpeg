@@ -68,6 +68,17 @@ When the client runs out of buffers to store frames, it will continue receiving 
 If the connection is disconnected or if the client detects a protocol error, it will try to reconnect the stream automatically.
 If the client receives a frame that is larger than the destination buffer, the frame will be discarded.
 
+The client can be stopped via its stop() method:
+```
+client.stop()
+```
+
+If the client shall be restarted after calling stop() one must create a new instance as threads can only be started once:
+```
+# Create a new client thread
+client = MJPEGClient(url)
+``` 
+
 The client provides a method called `print_stats` which can be used for debugging:
 ```
 MJPEGClient:
