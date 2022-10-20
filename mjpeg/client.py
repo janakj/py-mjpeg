@@ -106,7 +106,7 @@ class MJPEGClient(Thread):
         boundary = open_mjpeg_stream(stream)
         seq = 0
 
-        while True:
+        while not self._stop_loops:
             try:
                 buf = self._incoming.pop()
                 mem = buf.data
