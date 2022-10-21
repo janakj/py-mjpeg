@@ -7,7 +7,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name = 'py-mjpeg',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Jan Janak',
     author_email = 'jan@janakj.org',
     description = 'MJPEG Streaming Tools',
