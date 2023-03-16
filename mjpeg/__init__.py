@@ -109,10 +109,9 @@ def check_content_type(headers, type_):
     return True
 
 def check_boundary_string(boundary: str) -> str:
-    result = boundary
-    if boundary.startswith('----'):
-        result = boundary[2:]
-    return result
+    if not boundary.startswith('--'):
+        return '--' + boundary
+    return boundary
 
 
 def open_mjpeg_stream(stream):
@@ -129,7 +128,6 @@ def open_mjpeg_stream(stream):
     boundary = h.get_param('boundary', header='content-type', unquote=True)
     if boundary is None:
         raise ProtoError('Content-Type header does not provide boundary string')
-    boundary = '--' + boundary
     boundary = check_boundary_string(boundary)
 
     return boundary
