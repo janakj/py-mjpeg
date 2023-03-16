@@ -72,7 +72,7 @@ def skip_data(stream, left):
 
 
 async def askip_data(stream: aiohttp.BodyPartReader, left: int):
-    buf = bytearray(range(left))
+    buf = bytearray(left)
     await aread_data(buf, stream, left)
 
 
