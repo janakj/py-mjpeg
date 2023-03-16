@@ -14,7 +14,7 @@ __all__ = ['AioMJPEGClient']
 
 
 class AioMJPEGClient:
-    """An asyncronous MJPEG streaming client.
+    """An asynchronous MJPEG streaming client.
 
     This is an MJPEG client implemented using :mod:`asyncio`.
     Given a URL, the streamer will open the URL as an MJPEG stream and read

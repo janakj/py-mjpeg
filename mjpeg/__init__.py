@@ -206,7 +206,7 @@ async def aread_mjpeg_frame(
     length: int,
     skip_big: bool = True
 ) -> tuple[float, int]:
-    '''Read one MJPEG frame from given stream asyncronously.
+    '''Read one MJPEG frame from given stream asynchronously.
 
     This function processes exactly one frame.
     End of stream events are detected when the length of the next frame is 0.
