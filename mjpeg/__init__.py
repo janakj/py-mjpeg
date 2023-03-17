@@ -95,10 +95,6 @@ def read_data(buf, stream, length):
 
 async def aread_data(buf, stream: aiohttp.BodyPartReader, length: int):
     chunk_size = 8192
-    if chunk_size <= length:
-        while chunk_size <= length and chunk_size != 1:
-            chunk_size = chunk_size // 2
-
     i = 0
     remaining = length
     while remaining > 0:
