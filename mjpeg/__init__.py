@@ -1,5 +1,10 @@
-from time import time
+from __future__ import annotations
 
+from time import time
+import asyncio
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import aiohttp
 
 __all__ = [
     'ProtoError',
@@ -66,6 +71,11 @@ def skip_data(stream, left):
         left -= len(rv)
 
 
+async def askip_data(stream: aiohttp.BodyPartReader, left: int):
+    buf = bytearray(left)
+    await aread_data(buf, stream, left)
+
+
 def read_data(buf, stream, length):
     '''Read the give number of bytes into an existing bytearray buffer.
 
@@ -80,6 +90,24 @@ def read_data(buf, stream, length):
         if n == 0 and len(v):
             raise ProtoError('Not enough data in chunk')
         v = v[n:]
+    return buf
+
+
+async def aread_data(buf, stream: aiohttp.BodyPartReader, length: int):
+    chunk_size = 8192
+    i = 0
+    remaining = length
+    while remaining > 0:
+        if remaining < chunk_size:
+            chunk_size = remaining
+        data = await stream.read_chunk(chunk_size)
+        n = len(data)
+        remaining -= n
+        if n > 0:
+            buf[i:n] = data
+        if n == 0 and remaining > 0:
+            raise ProtoError('Not enough data in chunk')
+        i += n
     return buf
 
 
@@ -170,5 +198,63 @@ def read_mjpeg_frame(stream, boundary, buf, length, skip_big=True):
         read_data(buf, stream, clen)
     else:
         skip_data(stream, clen)
+
+    return (timestamp, clen)
+
+async def aread_mjpeg_frame(
+    stream: aiohttp.BodyPartReader,
+    buf,
+    length: int,
+    skip_big: bool = True
+) -> tuple[float, int]:
+    '''Read one MJPEG frame from given stream asynchronously.
+
+    This function processes exactly one frame.
+    End of stream events are detected when the length of the next frame is 0.
+    Ensures that Content-Type is present and set to 'image/jpeg'.
+
+    Arguments:
+        stream: An :class:`aiohttp.BodyPartReader` instance produced by
+            :class:`aiohttp.MultipartReader`
+        buf: An instance of :class:`mjpeg.Buffer` to store the frame data in
+        length: Maximum number of bytes to read
+        skip_big: If ``True`` and the frame data is larger than the given *length*,
+            the frame is skipped and the buffer is not written to.
+            If ``False`` and frame data is larger than *length*,
+            a :class:`ProtoError` is raised. (default is ``True``)
+
+    Returns
+    -------
+    timestamp : float
+        POSIX timestamp of the first byte of the frame
+    clen : int
+        Total number of bytes in the frame
+
+
+    To skip data when buffer is not available, simply pass buf=None, length=0,
+    skip_big=True and the next frame will be silently poped from the stream
+    and discarded.
+    '''
+
+    loop = asyncio.get_event_loop()
+    clen = stream._length
+    assert clen is not None
+
+    if clen == 0:
+        raise EOFError('End of stream reached')
+
+    if clen > length and not skip_big:
+        raise ProtoError('Received chunk too big: %d' % clen)
+
+    ctype = stream.headers['Content-type']
+    if ctype != 'image/jpeg':
+        raise ProtoError('Wrong Content-Type: %s' % ctype)
+
+    timestamp = loop.time()
+
+    if length >= clen:
+        await aread_data(buf, stream, clen)
+    else:
+        await askip_data(stream, clen)
 
     return (timestamp, clen)
